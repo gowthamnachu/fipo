@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-p(@)2$^5*or^q_rogi36#n3r^h78h)vy)20fglnun0gp_@)apr
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['financeportfolio.onrender.com','127.0.0.1']
+ALLOWED_HOSTS = ['financeportfolio.vercel.app','127.0.0.1']
 
 
 # Application definition
