@@ -27,15 +27,7 @@ SECRET_KEY = 'django-insecure-p(@)2$^5*or^q_rogi36#n3r^h78h)vy)20fglnun0gp_@)apr
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['financeportfolio.herokuapp.com', '.vercel.app', 'localhost', '127.0.0.1']
-
-# Security Settings
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_HSTS_SECONDS = 31536000
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
+ALLOWED_HOSTS = ['.vercel.app', '.now.sh', 'localhost', '127.0.0.1']
 
 
 # Application definition
