@@ -1,0 +1,1 @@
+web: gunicorn fipo.wsgi --log-file -
