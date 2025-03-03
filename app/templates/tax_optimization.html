@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Tax Optimization Based on Annual Income</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>
+
+{% if optimization_result %}
+    <h3>Tax Optimization Results for ₹{{ optimization_result.annual_income }}:</h3>
+    <p><strong>Total Tax Payable:</strong> ₹{{ optimization_result.total_tax }}</p>
+    <p><strong>Surcharge Applied:</strong> ₹{{ optimization_result.surcharge }}</p>
+    <p><strong>Suggested Tax-saving Strategy:</strong> {{ optimization_result.suggested_strategy }}</p>
+    <p><strong>Estimated Profit Gain (from tax optimization):</strong> ₹{{ optimization_result.profit_gain }}</p>
+    <p>By applying these tax-saving strategies, you can reduce your tax liabilities and increase your after-tax returns.</p>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIPO Dashboard</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo_fipo.png' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        /* Base Styles */
+        body {
+            display: flex;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #0E001F; /* Dark Purple Background */
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 90px;
+            background: #1D0F39;
+            color: white;
+            height: 100vh;
+            padding: 20px;
+            position: fixed;
+            z-index: 10;
+            transition: width 0.5s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar:hover {
+            width: 240px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .sidebar ul li {
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            text-align: center;
+        }
+
+        .sidebar:hover ul li {
+            opacity: 1;
+        }
+
+        .sidebar ul li:hover {
+            background: #6A4C9C;
+            transform: translateX(10px);
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+            justify-content: center;
+            transition: color 0.3s ease;
+        }
+
+        .sidebar ul li a:hover {
+            color: #fff;
+        }
+
+        .sidebar ul li i {
+            margin-right: 15px;
+        }
+
+        /* Main Content */
+        .content {
+            margin-left: 240px;
+            padding: 20px;
+            width: calc(100% - 240px);
+            background: #0E001F;
+            position: relative;
+        }
+
+        /* Logo Video */
+        .logo-video {
+            position: left;
+            top: 20px;
+            left: -120px;
+            width: 90px;
+            height: 90px;
+            object-fit: cover;
+            z-index: 100;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .logo-video:hover {
+            transform: scale(1.05);
+        }
+
+        /* Authentication Links Positioned Top-Right */
+        .auth-links {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .auth-links .auth-btn {
+            color: white;
+            font-size: 22px;
+            transition: transform 0.3s ease;
+        }
+
+        .auth-links .auth-btn:hover {
+            transform: scale(1.1);
+            color: #6A4C9C;
+        }
+
+        a {
+            text-decoration: none;
+            color: #6A4C9C;
+        }
+
+        a:hover {
+            color: white;
+        }        /* Profile Icon Styling */
+        .profile-container {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #ffffff;
+        }
+
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: #27124e;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+            min-width: 200px;
+            padding: 10px;
+            text-align: left;
+            z-index: 1001;
+        }
+
+        .profile-dropdown a {
+            display: block;
+            padding: 10px;
+            color: #c0a8ff;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .profile-dropdown a:hover {
+            background: #3c1c64;
+            color: white;
+            border-radius: 6px;
+        }
+
+        .profile-container:hover .profile-dropdown {
+            display: block;
+        }
+
+        .username {
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .user-email {
+            font-size: 12px;
+            color: #c0a8ff;
+            margin-bottom: 10px;
+        }
+
+        .separator {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 8px 0;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    {% include 'load.html' %}
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Logo Video -->
+        <video class="logo-video" autoplay loop muted>
+            <source src="{% static 'videos/logo_fipo.mp4' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+
+        <!-- Sidebar Navigation Links -->
+        <ul>
+            <li><a href="{% url 'dashboard' %}"><i class="fas fa-house"></i> Dashboard</a></li>
+            <li><a href="{% url 'fund_allocation' %}"><i class="fas fa-coins"></i> Fund Allocation</a></li>
+            <li><a href="{% url 'visualize_funds' %}"><i class="fas fa-chart-bar"></i> Visualize Your Funds</a></li>
+            <li><a href="{% url 'portfolio_insights' %}"><i class="fas fa-lightbulb"></i> Advanced Portfolio Insights</a></li>
+            <li><a href="{% url 'generate_pdf_report' %}"><i class="fas fa-file-pdf"></i> Download Report</a></li>
+            <li><a href="{% url 'risk_return_analysis' %}"><i class="fas fa-chart-line"></i> Risk & Return Analysis</a></li>
+            <li><a href="{% url 'tax_optimization' %}"><i class="fas fa-calculator"></i> Tax Optimization</a></li>  
+            <li><a href="{% url 'about_us' %}"><i class="fas fa-info-circle"></i> About FiPo</a></li>
+        </ul>
+    </div>
+    <div class="nav-right">
+        {% if user.is_authenticated %}
+        <div class="profile-container">
+            <img src="{% static 'images/profile.png' %}" alt="Profile" class="profile-icon">
+            <div class="profile-dropdown">
+                <p class="username">{{ user.username }}</p>
+                <p class="user-email">{{ user.email }}</p>
+                <div class="separator"></div>
+                <a href="{% url 'profile' %}">View Profile</a>
+                <a href="{% url 'logout' %}">Logout</a>
+            </div>
+        </div>
+        
+    <!-- Main Content -->
+    <div class="content">
+        <!-- User Authentication Links (Top-Right) -->
+        <div class="auth-links">
+    
+                <a href="{% url 'logout' %}" class="auth-btn" title="Logout"><i class="fas fa-sign-out-alt"></i></a>
+            {% else %}
+                <a href="{% url 'login' %}" class="auth-btn" title="Login"><i class="fas fa-sign-in-alt"></i></a>
+                <a href="{% url 'signup' %}" class="auth-btn" title="Sign Up"><i class="fas fa-user-plus"></i></a>
+            {% endif %}
+        </div>
+
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script>
+        // Show loading screen when the page starts loading
+        document.getElementById('loading-screen').style.display = 'flex';
+
+        // Hide loading screen once the content is loaded
+        window.addEventListener('load', function() {
+            document.getElementById('loading-screen').style.display = 'none';
+        });
+    </script>
+
+</body>
+</html>

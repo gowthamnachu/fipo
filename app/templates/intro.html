@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intro Video</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #13002e; /* Deep Violet Background */
+            color: white;
+        }
+        .video-container {
+            position: relative;
+            max-width: 90%;
+            height: auto;
+            box-shadow: #13002e;
+        }
+        video {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="video-container">
+        <video id="intro-video" autoplay muted>
+            <source src="{% static 'videos/intro_fipo.mp4' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <script>
+        // Check if the intro video has already been shown
+        if (!localStorage.getItem("introPlayed")) {
+            // Set a flag to remember the intro video has been shown
+            document.getElementById("intro-video").onended = function() {
+                // Wait for 2 seconds before redirecting
+                setTimeout(function() {
+                    localStorage.setItem("introPlayed", "true");
+                    window.location.href = "{% url 'dashboard' %}"; // Redirect to the dashboard after the delay
+                }, 2000); // 2000 milliseconds (2 seconds)
+            };
+        } else{
+            window.location.href = "{% url 'dashboard' %}"; // Redirect to the dashboard if
+        }
+
+    </script>
+
+</body>
+</html>

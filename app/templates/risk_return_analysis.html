@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Risk & Return Analysis{% endblock %}
+
+{% block content %}
+    <h1>Risk & Return Analysis</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Analyze</button>
+    </form>
+
+    {% if error_message %}
+        <div style="color: red;">
+            <p>{{ error_message }}</p>
+        </div>
+    {% endif %}
+
+    {% if analysis_results %}
+        <h3>Analysis Results for {{ analysis_results.stock_symbol }}</h3>
+        <table border="1">
+            <tr>
+                <th>Expected Return (Annualized)</th>
+                <td>{{ analysis_results.expected_return }}%</td>
+            </tr>
+            <tr>
+                <th>Risk (Volatility, Annualized)</th>
+                <td>{{ analysis_results.risk }}%</td>
+            </tr>
+            <tr>
+                <th>Sharpe Ratio</th>
+                <td>{{ analysis_results.sharpe_ratio }}</td>
+            </tr>
+        </table>
+
+        <h3>Stock Price Movement</h3>
+        <img src="data:image/png;base64,{{ chart_url }}" alt="Stock Price Chart">
+
+    {% endif %}
+{% endblock %}

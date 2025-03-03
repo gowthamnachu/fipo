@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2 style="text-align: center; color: #4A4A4A;">Advanced Portfolio Insights</h2>
+
+    <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 30px; margin-top: 20px;">
+        <div style="padding: 20px; background: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 10px; width: 250px;">
+            <h4>📈 Expected Return</h4>
+            <p style="font-size: 24px; color: #4A90E2;">{{ insights.expected_return|floatformat:2 }}%</p>
+        </div>
+
+        <div style="padding: 20px; background: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 10px; width: 250px;">
+            <h4>⚠️ Portfolio Risk</h4>
+            <p style="font-size: 24px; color: #FF6384;">{{ insights.portfolio_risk|floatformat:2 }}%</p>
+        </div>
+
+        <div style="padding: 20px; background: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 10px; width: 250px;">
+            <h4>💡 Sharpe Ratio</h4>
+            <p style="font-size: 24px; color: #FFCE56;">{{ insights.sharpe_ratio|floatformat:2 }}</p>
+        </div>
+
+        <div style="padding: 20px; background: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 10px; width: 250px;">
+            <h4>🌎 Diversification Score</h4>
+            <p style="font-size: 24px; color: #4BC0C0;">{{ insights.diversification_score|floatformat:2 }}%</p>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'generate_pdf_report' %}" class="btn btn-primary" style="padding: 10px 20px; background: #4A90E2; color: white; border-radius: 5px;">📄 Download Report</a>
+    </div>
+{% endblock %}

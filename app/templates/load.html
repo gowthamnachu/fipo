@@ -1,0 +1,10 @@
+{%load static%}
+<div id="loading-screen" style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #13002e; color: #39FF14; position: fixed; width: 100%; top: 0; left: 0; z-index: 9999;">
+    <div class="loading-container" style="text-align: center;">
+        <video autoplay loop muted style="width: 300px; height: 300px; border-radius: 12px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);">
+            <source src="{% static 'videos/logo_fipo.mp4' %}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="loading-text" style="margin-top: 20px; font-size: 24px;">Loading...</div>
+    </div>
+</div>

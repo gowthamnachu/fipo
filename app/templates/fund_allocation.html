@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Centering the Investment Box */
+    .center-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* Ensures full height */
+        padding: 20px;
+    }
+
+    .optimizer-container {
+        max-width: 700px;
+        width: 100%;
+        background: #27124e;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0px 6px 20px rgba(255, 255, 255, 0.1);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Background Circle */
+    .optimizer-container::before {
+        content: "";
+        position: absolute;
+        width: 250px;
+        height: 250px;
+        background: rgba(255, 255, 255, 0.07);
+        border-radius: 50%;
+        top: -80px;
+        right: -80px;
+    }
+
+    /* Heading */
+    .heading {
+        font-size: 28px;
+        color: #ffffff;
+        font-weight: bold;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .heading i {
+        margin-right: 12px;
+        color: #7c5cf5;
+    }
+
+    .subtext {
+        font-size: 15px;
+        color: #c0a8ff;
+        margin-bottom: 25px;
+    }
+
+    /* Investment Form */
+    .investment-form {
+        background: rgba(255, 255, 255, 0.06);
+        padding: 25px;
+        border-radius: 10px;
+        text-align: left;
+        margin-bottom: 25px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #c0a8ff;
+        border-radius: 6px;
+        background: #3c1c64;
+        color: white;
+        font-size: 16px;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    input:focus, select:focus {
+        border-color: #7c5cf5;
+    }
+
+    /* Submit Button */
+    .btn-submit {
+        background: #7c5cf5;
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.3s;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .btn-submit i {
+        margin-right: 8px;
+    }
+
+    .btn-submit:hover {
+        background: #a08cff;
+    }
+
+    /* Results Section */
+    .results-container {
+        margin-top: 30px;
+        padding: 25px;
+        background: #3c1c64;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+        text-align: center;
+    }
+
+    .result-heading {
+        font-size: 20px;
+        color: #fff;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .result-heading i {
+        margin-right: 10px;
+        color: #28a745;
+    }
+
+    .allocation-list {
+        list-style: none;
+        padding: 0;
+        text-align: left;
+    }
+
+    .allocation-list li {
+        font-size: 16px;
+        color: #c0a8ff;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .allocation-list i {
+        color: #7c5cf5;
+    }
+
+    /* Visualize Funds Button */
+    .btn-visualize {
+        display: inline-block;
+        margin-top: 20px;
+        background: #28a745;
+        color: white;
+        padding: 12px 25px;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: bold;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-visualize i {
+        margin-right: 10px;
+    }
+
+    .btn-visualize:hover {
+        background: #218838;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .center-wrapper {
+            height: auto;
+            padding: 30px 0;
+        }
+
+        .optimizer-container {
+            width: 90%;
+            margin: auto;
+            padding: 30px;
+        }
+
+        .investment-form {
+            padding: 20px;
+        }
+
+        .results-container {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="center-wrapper">
+    <div class="optimizer-container">
+        <h2 class="heading"><i class="fas fa-chart-line"></i> Investment Optimizer</h2>
+        <p class="subtext">Enter your investment amount to get an optimized portfolio allocation.</p>
+
+        <form method="post" class="investment-form">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="btn-submit"><i class="fas fa-calculator"></i> Optimize Investment</button>
+        </form>
+
+        {% if allocation %}
+            <div class="results-container">
+                <h3 class="result-heading"><i class="fas fa-coins"></i> Optimized Portfolio Allocation</h3>
+                <ul class="allocation-list">
+                    {% for category, amount in allocation.items %}
+                        <li>
+                            <i class="fas fa-check-circle"></i> <strong>{{ category }}</strong>
+                            <span>₹{{ amount|floatformat:2 }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <a href="{% url 'visualize_funds' %}" class="btn-visualize"><i class="fas fa-chart-pie"></i> Visualize Your Funds</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Font Awesome Icons -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+{% endblock %}

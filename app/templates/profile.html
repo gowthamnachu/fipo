@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+{%load static%}
+    <h1>Profile</h1>
+    <div class="profile-container">
+        <img src="{% static 'images/profile.png' %}" alt="Profile Picture">
+        <h2>{{ user.username }}</h2>
+        <p>Email: {{ user.email }}</p>
+        <p>Member Since: {{ user.date_joined|date:"F d, Y" }}</p>
+        <p>Last Login: {{ user.last_login|date:"F d, Y H:i" }}</p>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+
+    <style>
+        .profile-container {
+            text-align: center;
+            padding: 20px;
+            background: #27124e;
+            border-radius: 10px;
+            max-width: 400px;
+            margin: auto;
+            color: white;
+        }
+        .profile-container img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+        }
+        .logout-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: red;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+{% endblock %}
