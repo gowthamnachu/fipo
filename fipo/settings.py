@@ -22,10 +22,10 @@ LOGIN_URL = '/login/'
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-p(@)2$^5*or^q_rogi36#n3r^h78h)vy)20fglnun0gp_@)apr'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-p(@)2$^5*or^q_rogi36#n3r^h78h)vy)20fglnun0gp_@)apr')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['.vercel.app', '.now.sh', 'localhost', '127.0.0.1']
 
@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'fipo.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3') if not os.getenv('VERCEL_ENV') else '/tmp/db.sqlite3',
     }
 }
 
