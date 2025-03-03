@@ -1,8 +1,0 @@
-[build]
-  command = "python manage.py collectstatic --noinput && gunicorn fipo.wsgi"
-  publish = "staticfiles"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
