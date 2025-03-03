@@ -3,28 +3,28 @@
 
 {% block content %}
 <style>
-    /* Centering the Investment Box */
-    .center-wrapper {
+    /* Full Page Centering */
+    .full-page-container {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh; /* Ensures full height */
-        padding: 20px;
+        height: 100vh; /* Full viewport height */
     }
 
+    /* Investment Optimizer Box */
     .optimizer-container {
-        max-width: 700px;
-        width: 100%;
         background: #27124e;
         padding: 40px;
         border-radius: 12px;
         box-shadow: 0px 6px 20px rgba(255, 255, 255, 0.1);
         text-align: center;
+        width: 100%;
+        max-width: 750px;
         position: relative;
         overflow: hidden;
     }
 
-    /* Background Circle */
+    /* Background Circle for Design */
     .optimizer-container::before {
         content: "";
         position: absolute;
@@ -58,7 +58,7 @@
         margin-bottom: 25px;
     }
 
-    /* Investment Form */
+    /* Form Styling */
     .investment-form {
         background: rgba(255, 255, 255, 0.06);
         padding: 25px;
@@ -180,14 +180,7 @@
 
     /* Responsive Design */
     @media (max-width: 768px) {
-        .center-wrapper {
-            height: auto;
-            padding: 30px 0;
-        }
-
         .optimizer-container {
-            width: 90%;
-            margin: auto;
             padding: 30px;
         }
 
@@ -201,7 +194,7 @@
     }
 </style>
 
-<div class="center-wrapper">
+<div class="full-page-container">
     <div class="optimizer-container">
         <h2 class="heading"><i class="fas fa-chart-line"></i> Investment Optimizer</h2>
         <p class="subtext">Enter your investment amount to get an optimized portfolio allocation.</p>
