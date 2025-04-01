@@ -1,39 +1,695 @@
 {% extends 'base.html' %}
 {% block content %}
 {%load static%}
-    <h1>Profile</h1>
-    <div class="profile-container">
-        <img src="{% static 'images/profile.png' %}" alt="Profile Picture">
-        <h2>{{ user.username }}</h2>
-        <p>Email: {{ user.email }}</p>
-        <p>Member Since: {{ user.date_joined|date:"F d, Y" }}</p>
-        <p>Last Login: {{ user.last_login|date:"F d, Y H:i" }}</p>
-        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    <div class="profile-page">
+        <div class="profile-header">
+            <div class="profile-cover">
+                <div class="profile-cover-gradient"></div>
+            </div>
+            <div class="profile-avatar-container">
+                <img src="{% static 'images/profile.png' %}" alt="Profile Picture" class="profile-avatar">
+                <div class="profile-status online">
+                    <span class="status-tooltip">Online</span>
+                </div>
+            </div>
+            <h1 class="profile-name">{{ user.username }}</h1>
+            <p class="profile-tagline">FiPo Member</p>
+            <div class="profile-badges">
+                <span class="badge premium"><i class="fas fa-crown"></i> Premium</span>
+                <span class="badge verified"><i class="fas fa-check-circle"></i> Verified</span>
+            </div>
+        </div>
+
+        <div class="profile-content">
+            <div class="profile-grid">
+                <!-- Premium Benefits Section -->
+                <div class="profile-card benefits-card">
+                    <div class="card-header">
+                        <i class="fas fa-star"></i>
+                        <h3>Premium Benefits</h3>
+                    </div>
+                    <div class="card-content benefits-grid">
+                        <div class="benefit-item">
+                            <div class="benefit-icon"><i class="fas fa-chart-pie"></i></div>
+                            <h4>Advanced Analytics</h4>
+                            <p>Access to detailed portfolio analysis and market insights</p>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon"><i class="fas fa-robot"></i></div>
+                            <h4>AI Advisor</h4>
+                            <p>Personalized investment recommendations powered by AI</p>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon"><i class="fas fa-bell"></i></div>
+                            <h4>Priority Alerts</h4>
+                            <p>Real-time notifications for market opportunities</p>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon"><i class="fas fa-headset"></i></div>
+                            <h4>Premium Support</h4>
+                            <p>24/7 dedicated customer support access</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-card info-card">
+                    <div class="card-header">
+                        <i class="fas fa-user-circle"></i>
+                        <h3>Personal Information</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="info-item">
+                            <i class="fas fa-envelope"></i>
+                            <div class="info-details">
+                                <label>Email</label>
+                                <p>{{ user.email }}</p>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <div class="info-details">
+                                <label>Member Since</label>
+                                <p>{{ user.date_joined|date:"F d, Y" }}</p>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-clock"></i>
+                            <div class="info-details">
+                                <label>Last Login</label>
+                                <p>{{ user.last_login|date:"F d, Y H:i" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-card stats-card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Portfolio Analytics</h3>
+                    </div>
+                    <div class="card-content stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
+                            <div class="stat-value">{{ user.portfolios.count }}</div>
+                            <div class="stat-label">Active Portfolios</div>
+                            <div class="stat-trend positive"><i class="fas fa-arrow-up"></i> 12%</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon"><i class="fas fa-chart-pie"></i></div>
+                            <div class="stat-value">{{ user.investments.count }}</div>
+                            <div class="stat-label">Total Investments</div>
+                            <div class="stat-trend positive"><i class="fas fa-arrow-up"></i> 8%</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon"><i class="fas fa-tasks"></i></div>
+                            <div class="stat-value">{{ user.profile_completion|default:"0" }}%</div>
+                            <div class="stat-label">Strategy Completion</div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: {{ user.profile_completion|default:0 }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-card activity-card">
+                    <div class="card-header">
+                        <i class="fas fa-history"></i>
+                        <h3>Recent Activity</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="activity-timeline">
+                            <div class="activity-item">
+                                <div class="activity-icon"><i class="fas fa-exchange-alt"></i></div>
+                                <div class="activity-details">
+                                    <h4>Portfolio Rebalanced</h4>
+                                    <p>Optimized asset allocation for better returns</p>
+                                    <span class="activity-time">2 hours ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon"><i class="fas fa-chart-line"></i></div>
+                                <div class="activity-details">
+                                    <h4>Investment Strategy Updated</h4>
+                                    <p>Modified risk parameters</p>
+                                    <span class="activity-time">1 day ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-actions">
+                <a href="#" class="action-btn edit-profile">
+                    <i class="fas fa-edit"></i>
+                    Edit Profile
+                </a>
+                <a href="{% url 'logout' %}" class="action-btn logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+
+            <div class="download-report-section">
+                <h2 class="download-report-title">Download Your Portfolio Report</h2>
+                <p class="download-report-description">Get a detailed analysis of your investment portfolio, including performance metrics, risk assessment, and personalized recommendations.</p>
+                <a href="#" class="download-btn">
+                    <i class="fas fa-file-download"></i>
+                    Download Report
+                </a>
+            </div>
+        </div>
     </div>
 
     <style>
-        .profile-container {
-            text-align: center;
+        .profile-page {
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
-            background: #27124e;
-            border-radius: 10px;
-            max-width: 400px;
-            margin: auto;
-            color: white;
         }
-        .profile-container img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
+
+        .profile-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin: 0 auto;
+            max-width: 1000px;
         }
-        .logout-btn {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 10px 20px;
-            background: red;
+
+        .download-report-section {
+            background: #1D0F39;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .download-report-title {
+            color: #ffffff;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .download-report-description {
+            color: #b39ddb;
+            margin-bottom: 25px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(45deg, #755BB4, #9578D3);
             color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
             text-decoration: none;
-            border-radius: 5px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(45deg, #9578D3, #B69EF2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .download-btn i {
+            font-size: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .profile-page {
+                padding: 10px;
+            }
+
+            .download-report-section {
+                padding: 20px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .profile-header {
+            position: relative;
+            text-align: center;
+            padding-bottom: 40px;
+            margin-bottom: 50px;
+        }
+
+        .profile-cover {
+            height: 250px;
+            background: linear-gradient(135deg, #2A1052, #4A2082);
+            border-radius: 20px;
+            margin-bottom: -75px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-cover-gradient {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to top, rgba(29, 15, 57, 0.9), transparent);
+        }
+
+        .profile-avatar-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid #1D0F39;
+            background: #2A1052;
+            object-fit: cover;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .profile-status {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #4CAF50;
+            border: 4px solid #1D0F39;
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            z-index: 3;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .status-tooltip {
+            position: absolute;
+            background: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .profile-status:hover .status-tooltip {
+            opacity: 1;
+            visibility: visible;
+            bottom: 120%;
+        }
+
+        .profile-badges {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            animation: badgeSlideIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes badgeSlideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .badge.premium {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #1D0F39;
+            animation-delay: 0.2s;
+        }
+
+        .badge.verified {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            animation-delay: 0.4s;
+        }
+
+        .profile-name {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 20px 0 8px;
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-tagline {
+            color: #b39ddb;
+            font-size: 18px;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 10px;
+        }
+
+        .benefit-item {
+            background: rgba(74, 32, 130, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(179, 157, 219, 0.1);
+        }
+
+        .benefit-item:hover {
+            transform: translateY(-5px);
+            background: rgba(74, 32, 130, 0.2);
+            border-color: rgba(179, 157, 219, 0.3);
+        }
+
+        .benefit-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #755BB4, #9578D3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+
+        .benefit-icon i {
+            font-size: 24px;
+            color: white;
+        }
+
+        .benefit-item h4 {
+            color: #ffffff;
+            margin: 0 0 10px;
+            font-size: 18px;
+        }
+
+        .benefit-item p {
+            color: #b39ddb;
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .profile-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        .profile-card {
+            background: #1D0F39;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background: linear-gradient(45deg, #2A1052, #4A2082);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-header i {
+            font-size: 24px;
+            color: #b39ddb;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 20px;
+        }
+
+        .card-content {
+            padding: 25px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-item i {
+            font-size: 20px;
+            color: #b39ddb;
+            width: 24px;
+            text-align: center;
+        }
+
+        .info-details {
+            flex: 1;
+        }
+
+        .info-details label {
+            display: block;
+            font-size: 13px;
+            color: #b39ddb;
+            margin-bottom: 3px;
+        }
+
+        .info-details p {
+            margin: 0;
+            font-size: 16px;
+            color: #ffffff;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 10px;
+        }
+
+        .stat-item {
+            background: rgba(74, 32, 130, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(179, 157, 219, 0.1);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            background: rgba(74, 32, 130, 0.2);
+            border-color: rgba(179, 157, 219, 0.3);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #b39ddb;
+            margin-bottom: 12px;
+        }
+
+        .stat-trend {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-trend.positive {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+        }
+
+        .stat-trend.negative {
+            background: rgba(244, 67, 54, 0.1);
+            color: #F44336;
+        }
+
+        .stat-trend.neutral {
+            background: rgba(255, 152, 0, 0.1);
+            color: #FF9800;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(179, 157, 219, 0.1);
+            border-radius: 2px;
+            margin-top: 8px;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(45deg, #7c5cf5, #b39ddb);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .edit-profile {
+            background: linear-gradient(45deg, #755BB4, #9578D3);
+            color: white;
+        }
+
+        .edit-profile:hover {
+            background: linear-gradient(45deg, #9578D3, #B69EF2);
+            transform: translateY(-2px);
+        }
+
+        .logout-btn {
+            background: linear-gradient(45deg, #FF5252, #FF7676);
+            color: white;
+        }
+
+        .logout-btn:hover {
+            background: linear-gradient(45deg, #FF7676, #FF9E9E);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 10px;
+        }
+
+        .benefit-item {
+            background: rgba(74, 32, 130, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(179, 157, 219, 0.1);
+        }
+
+        .benefit-item:hover {
+            transform: translateY(-5px);
+            background: rgba(74, 32, 130, 0.2);
+            border-color: rgba(179, 157, 219, 0.3);
+        }
+
+        .benefit-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #755BB4, #9578D3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+
+        .benefit-icon i {
+            font-size: 24px;
+            color: white;
+        }
+
+        .benefit-item h4 {
+            color: #ffffff;
+            margin: 0 0 10px;
+            font-size: 18px;
+        }
+
+        .benefit-item p {
+            color: #b39ddb;
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .profile-content {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .profile-actions {
+                flex-direction: column;
+            }
         }
     </style>
 {% endblock %}

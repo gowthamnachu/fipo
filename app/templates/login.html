@@ -6,10 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | FiPo</title>
     <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         /* Main Theme */
         body {
-            background-color: #0E001F; /* Deep Dark Purple */
+            background-color: #0E001F;
             font-family: 'Poppins', sans-serif;
             color: white;
             display: flex;
@@ -21,7 +22,7 @@
 
         /* Auth Container */
         .auth-container {
-            background: #1D0F39; /* Rich Dark Purple */
+            background: #1D0F39;
             padding: 45px;
             border-radius: 15px;
             box-shadow: 0 8px 24px rgba(255, 255, 255, 0.08);
@@ -40,9 +41,16 @@
 
         .auth-container p.branding {
             font-size: 15px;
-            color: #b39ddb; /* Soft purple */
+            color: #b39ddb;
             margin-bottom: 25px;
             font-weight: 500;
+        }
+
+        /* Form Group */
+        .form-group {
+            position: relative;
+            margin-bottom: 20px;
+            text-align: left;
         }
 
         /* Labels */
@@ -52,29 +60,79 @@
             margin: 12px 0 5px;
             font-size: 14px;
             font-weight: 500;
-            color: #d1c4e9; /* Light lavender */
+            color: #d1c4e9;
         }
 
         /* Input Fields */
-        input {
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group input {
             width: 100%;
-            padding: 13px;
-            margin-bottom: 18px;
+            padding: 13px 40px 13px 13px;
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 8px;
             background: #2B1950;
             color: white;
             font-size: 15px;
             outline: none;
-            transition: border 0.3s ease;
+            transition: all 0.3s ease;
         }
 
-        input:focus {
-            border: 1px solid #b39ddb;
+        .input-group input:focus {
+            border-color: #b39ddb;
+            box-shadow: 0 0 0 2px rgba(179, 157, 219, 0.2);
+        }
+
+        .input-group i {
+            position: absolute;
+            right: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            transition: color 0.3s ease;
+        }
+
+        .input-group input:focus + i {
+            color: #b39ddb;
         }
 
         input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Remember Me & Forgot Password */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+            font-size: 13px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            accent-color: #b39ddb;
+        }
+
+        .forgot-password {
+            color: #b39ddb;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            color: white;
+            text-decoration: underline;
         }
 
         /* Button */
@@ -88,63 +146,246 @@
             font-size: 17px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s ease, transform 0.2s;
+            transition: all 0.3s ease;
             box-shadow: 0 4px 12px rgba(149, 120, 211, 0.3);
+            position: relative;
+            overflow: hidden;
         }
 
         button:hover {
             background: linear-gradient(45deg, #9578D3, #B69EF2);
-            transform: scale(1.03);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(149, 120, 211, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
         }
 
         /* Sign-Up & Links */
-        p {
-            margin-top: 18px;
-            font-size: 15px;
-            font-weight: 500;
+        .auth-links {
+            margin-top: 25px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
         }
 
-        a {
+        .auth-links a {
             color: #b39ddb;
-            font-weight: 600;
             text-decoration: none;
-            transition: color 0.3s ease;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
 
-        a:hover {
+        .auth-links a:hover {
             color: white;
+            text-decoration: underline;
+        }
+
+        /* Error Messages */
+        .error-message {
+            color: #ff6b6b;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .input-error {
+            border-color: #ff6b6b !important;
+        }
+
+        .input-error + i {
+            color: #ff6b6b !important;
+        }
+        
+        /* Auth Error Messages */
+        .auth-error {
+            background: rgba(255, 107, 107, 0.1);
+            border-left: 3px solid #ff6b6b;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            animation: fadeInShake 0.5s ease-in-out;
+            display: none;
+        }
+        
+        .auth-error i {
+            font-size: 18px;
+            color: #ff6b6b;
+            margin-right: 10px;
+        }
+        
+        .auth-error p {
+            color: #ff6b6b;
+            margin: 0;
+            font-size: 14px;
+        }
+        
+        /* Animations */
+        @keyframes fadeInShake {
+            0% { opacity: 0; transform: translateX(-5px); }
+            20% { transform: translateX(5px); }
+            40% { transform: translateX(-3px); }
+            60% { transform: translateX(3px); }
+            80% { transform: translateX(-2px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes userNotFoundAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .shake-icon {
+            animation: shakeIcon 0.5s ease-in-out;
+        }
+        
+        @keyframes shakeIcon {
+            0% { transform: rotate(0); }
+            25% { transform: rotate(-15deg); }
+            50% { transform: rotate(15deg); }
+            75% { transform: rotate(-10deg); }
+            100% { transform: rotate(0); }
+        }
+        
+        .pulse-icon {
+            animation: pulseIcon 1s infinite;
+        }
+        
+        @keyframes pulseIcon {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         /* Animation */
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-
     <div class="auth-container">
-        <h2>Welcome to FiPo</h2>
-        <p class="branding">Smart Investment Optimization, Free for You.</p>
-        <form method="POST">
+        <h2>Welcome Back</h2>
+        <p class="branding">Sign in to continue to FiPo</p>
+
+        <form method="post" id="loginForm" novalidate>
             {% csrf_token %}
-            <label for="username">Username or Email</label>
-            <input type="text" id="username" name="username" placeholder="Enter your username or email" required>
+            
+            <!-- Authentication Error Messages -->
+            <div class="auth-error" id="incorrect-password-error">
+                <i class="fas fa-exclamation-circle shake-icon"></i>
+                <p>Incorrect password. Please try again.</p>
+            </div>
+            
+            <div class="auth-error" id="user-not-found-error">
+                <i class="fas fa-user-slash pulse-icon"></i>
+                <p>User not found. Please check your username or <a href="{% url 'signup' %}">sign up</a>.</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="username">Username or Email</label>
+                <div class="input-group">
+                    <input type="text" id="username" name="username" placeholder="Enter your username or email" required>
+                    <i class="fas fa-user"></i>
+                </div>
+                <span class="error-message" id="username-error"></span>
+            </div>
 
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-group">
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    <i class="fas fa-lock"></i>
+                </div>
+                <span class="error-message" id="password-error"></span>
+            </div>
 
-            <button type="submit">Login</button>
+            <div class="form-options">
+                <label class="remember-me">
+                    <input type="checkbox" name="remember_me">
+                    <span>Remember me</span>
+                </label>
+                <a href="#" class="forgot-password">Forgot Password?</a>
+            </div>
+
+            <button type="submit">Sign In</button>
+
+            <div class="auth-links">
+                Don't have an account? <a href="{% url 'signup' %}">Sign up</a>
+            </div>
         </form>
-        <p>New to FiPo? <a href="{% url 'signup' %}">Create an Account</a></p>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for Django messages and display appropriate error
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                        if ('{{ message }}' === 'incorrect_password') {
+                            document.getElementById('incorrect-password-error').style.display = 'flex';
+                            // Restart animation
+                            const icon = document.querySelector('#incorrect-password-error i');
+                            icon.classList.remove('shake-icon');
+                            void icon.offsetWidth; // Trigger reflow
+                            icon.classList.add('shake-icon');
+                        } else if ('{{ message }}' === 'user_not_found') {
+                            document.getElementById('user-not-found-error').style.display = 'flex';
+                            // Pulse animation is already set to infinite
+                        }
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            let isValid = true;
+            const username = document.getElementById('username');
+            const password = document.getElementById('password');
+            
+            // Reset previous errors
+            document.querySelectorAll('.error-message').forEach(msg => msg.style.display = 'none');
+            document.querySelectorAll('input').forEach(input => input.classList.remove('input-error'));
+            document.querySelectorAll('.auth-error').forEach(error => error.style.display = 'none');
+
+            // Username validation
+            if (!username.value.trim()) {
+                document.getElementById('username-error').textContent = 'Username is required';
+                document.getElementById('username-error').style.display = 'block';
+                username.classList.add('input-error');
+                isValid = false;
+            }
+
+            // Password validation
+            if (!password.value) {
+                document.getElementById('password-error').textContent = 'Password is required';
+                document.getElementById('password-error').style.display = 'block';
+                password.classList.add('input-error');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+
+        // Toggle password visibility
+        document.querySelector('.input-group i.fa-lock').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.classList.remove('fa-lock');
+                this.classList.add('fa-lock-open');
+            } else {
+                passwordInput.type = 'password';
+                this.classList.remove('fa-lock-open');
+                this.classList.add('fa-lock');
+            }
+        });
+    </script>
 </body>
 </html>

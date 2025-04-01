@@ -1,31 +1,218 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2 style="text-align: center; color: #4A4A4A;">Advanced Portfolio Insights</h2>
+<div class="insights-dashboard">
+    <h2 class="dashboard-title">Advanced Portfolio Analytics</h2>
 
-    <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 30px; margin-top: 20px;">
-        <div style="padding: 20px; background: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 10px; width: 250px;">
+    <!-- Key Metrics Grid -->
+    <div class="metrics-grid">
+        <div class="metric-card primary">
             <h4>📈 Expected Return</h4>
-            <p style="font-size: 24px; color: #4A90E2;">{{ insights.expected_return|floatformat:2 }}%</p>
+            <p class="metric-value">{{ insights.expected_return|floatformat:2 }}%</p>
+            <div class="trend positive">↑ 2.3% vs prev month</div>
         </div>
 
-        <div style="padding: 20px; background: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 10px; width: 250px;">
+        <div class="metric-card warning">
             <h4>⚠️ Portfolio Risk</h4>
-            <p style="font-size: 24px; color: #FF6384;">{{ insights.portfolio_risk|floatformat:2 }}%</p>
+            <p class="metric-value">{{ insights.portfolio_risk|floatformat:2 }}%</p>
+            <div class="trend neutral">→ Stable</div>
         </div>
 
-        <div style="padding: 20px; background: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 10px; width: 250px;">
+        <div class="metric-card info">
             <h4>💡 Sharpe Ratio</h4>
-            <p style="font-size: 24px; color: #FFCE56;">{{ insights.sharpe_ratio|floatformat:2 }}</p>
+            <p class="metric-value">{{ insights.sharpe_ratio|floatformat:2 }}</p>
+            <div class="trend positive">↑ 0.1 vs benchmark</div>
         </div>
 
-        <div style="padding: 20px; background: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 10px; width: 250px;">
+        <div class="metric-card success">
             <h4>🌎 Diversification Score</h4>
-            <p style="font-size: 24px; color: #4BC0C0;">{{ insights.diversification_score|floatformat:2 }}%</p>
+            <p class="metric-value">{{ insights.diversification_score|floatformat:2 }}%</p>
+            <div class="trend positive">↑ Well diversified</div>
         </div>
     </div>
 
-    <div style="text-align: center; margin-top: 20px;">
-        <a href="{% url 'generate_pdf_report' %}" class="btn btn-primary" style="padding: 10px 20px; background: #4A90E2; color: white; border-radius: 5px;">📄 Download Report</a>
+    <!-- Advanced Analytics Section -->
+    <div class="analytics-section">
+        <div class="analytics-card">
+            <h3>Risk Metrics</h3>
+            <div class="risk-metrics-grid">
+                <div class="risk-metric">
+                    <span class="label">Value at Risk (VaR)</span>
+                    <span class="value">{{ insights.var|default:"4.2" }}%</span>
+                    <span class="description">95% confidence, 1-day</span>
+                </div>
+                <div class="risk-metric">
+                    <span class="label">Beta</span>
+                    <span class="value">{{ insights.beta|default:"1.12" }}</span>
+                    <span class="description">vs S&P 500</span>
+                </div>
+                <div class="risk-metric">
+                    <span class="label">Alpha</span>
+                    <span class="value">{{ insights.alpha|default:"2.3" }}%</span>
+                    <span class="description">Excess return</span>
+                </div>
+                <div class="risk-metric">
+                    <span class="label">Tracking Error</span>
+                    <span class="value">{{ insights.tracking_error|default:"1.8" }}%</span>
+                    <span class="description">vs benchmark</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Charts -->
+        <div class="charts-section">
+            <div class="chart-card">
+                <h3>Sector Allocation</h3>
+                <canvas id="sectorChart"></canvas>
+            </div>
+        </div>
     </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Only keep Sector Chart
+const sectorCtx = document.getElementById('sectorChart').getContext('2d');
+new Chart(sectorCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Technology', 'Finance', 'Healthcare', 'Consumer', 'Energy'],
+        datasets: [{
+            data: [30, 25, 20, 15, 10],
+            backgroundColor: ['#7c5cf5', '#b3a0f2', '#4834d4', '#686de0', '#9c88ff']
+        }]
+    }
+});
+</script>
+
+<style>
+.insights-dashboard {
+    padding: 20px 20px 20px 40px; /* Adjusted padding to match profile */
+    max-width: 1200px; /* Adjusted to match profile */
+    margin: 0 auto 0 200px; /* Increased left margin from 100px to 200px */
+    background: #0A0520;
+}
+
+.dashboard-title {
+    text-align: center;
+    color: #ffffff; /* Updated to match profile theme */
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.metric-card {
+    padding: 1.5rem;
+    border-radius: 12px;
+    background: #1D0F39; /* Updated to match profile cards */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+}
+
+.metric-card h4 {
+    margin: 0;
+    color: #b39ddb; /* Updated to match profile theme */
+    font-size: 1rem;
+}
+
+.metric-value {
+    color: #ffffff; /* Updated text color */
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0.5rem 0;
+}
+
+.trend {
+    font-size: 0.9rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+}
+
+.trend.positive {
+    background: rgba(76, 175, 80, 0.1);
+    color: #4CAF50;
+}
+
+.trend.neutral {
+    background: rgba(255, 152, 0, 0.1);
+    color: #FF9800;
+}
+
+.analytics-section {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.analytics-card {
+    background: #1D0F39; /* Updated to match profile cards */
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.analytics-card h3 {
+    color: #ffffff; /* Updated heading color */
+    margin-bottom: 1rem;
+}
+
+.risk-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.risk-metric {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    background: rgba(74, 32, 130, 0.1); /* Updated to match profile theme */
+    border: 1px solid rgba(179, 157, 219, 0.1);
+    border-radius: 12px;
+}
+
+.risk-metric .label {
+    color: #b39ddb; /* Updated label color */
+    font-size: 0.9rem;
+}
+
+.risk-metric .value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff; /* Updated value color */
+}
+
+.risk-metric .description {
+    font-size: 0.8rem;
+    color: #b39ddb; /* Updated description color */
+}
+
+.charts-section {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+.chart-card {
+    background: #1D0F39;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.chart-card h3 {
+    color: #ffffff;
+    margin-bottom: 1rem;
+}
+</style>
 {% endblock %}

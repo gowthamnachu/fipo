@@ -1,21 +1,524 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<h1>Tax Optimization Based on Annual Income</h1>
+<div class="tax-optimization-page">
+    <div class="tax-header">
+        <div class="header-content">
+            <h1>Tax Optimization Suite</h1>
+            <p class="header-subtitle">Advanced Tax Planning & Strategy Optimization</p>
+        </div>
+    </div>
 
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit</button>
-</form>
+    <div class="tax-content">
+        <div class="tax-grid">
+            <!-- Input Form Card -->
+            <div class="tax-card form-card">
+                <div class="card-header">
+                    <i class="fas fa-calculator"></i>
+                    <h3>Calculate Tax Optimization</h3>
+                </div>
+                <div class="card-content">
+                    <form method="POST" class="tax-form">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-chart-line"></i>
+                            Optimize Tax Strategy
+                        </button>
+                    </form>
+                </div>
+            </div>
 
-{% if optimization_result %}
-    <h3>Tax Optimization Results for ₹{{ optimization_result.annual_income }}:</h3>
-    <p><strong>Total Tax Payable:</strong> ₹{{ optimization_result.total_tax }}</p>
-    <p><strong>Surcharge Applied:</strong> ₹{{ optimization_result.surcharge }}</p>
-    <p><strong>Suggested Tax-saving Strategy:</strong> {{ optimization_result.suggested_strategy }}</p>
-    <p><strong>Estimated Profit Gain (from tax optimization):</strong> ₹{{ optimization_result.profit_gain }}</p>
-    <p>By applying these tax-saving strategies, you can reduce your tax liabilities and increase your after-tax returns.</p>
-{% endif %}
+            {% if optimization_result %}
+                <!-- Results Summary Card -->
+                <div class="tax-card results-card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-pie"></i>
+                        <h3>Tax Analysis Summary</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="metric-item">
+                            <span class="metric-label">Annual Income</span>
+                            <span class="metric-value">₹{{ optimization_result.annual_income }}</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Total Tax Payable</span>
+                            <span class="metric-value">₹{{ optimization_result.total_tax }}</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Surcharge Applied</span>
+                            <span class="metric-value">₹{{ optimization_result.surcharge }}</span>
+                        </div>
+                        <div class="metric-item highlight">
+                            <span class="metric-label">Estimated Savings</span>
+                            <span class="metric-value positive">₹{{ optimization_result.profit_gain }}</span>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Strategy Card -->
+                <div class="tax-card strategy-card">
+                    <div class="card-header">
+                        <i class="fas fa-lightbulb"></i>
+                        <h3>Recommended Strategy</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="strategy-content">
+                            <p class="strategy-text">{{ optimization_result.suggested_strategy }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Tax Segmentation Card -->
+            <div class="tax-card segmentation-card">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>Tax Breakdown Analysis</h3>
+                </div>
+                <div class="card-content">
+                    <div class="tax-table-wrapper">
+                        <table class="tax-table">
+                            <thead>
+                                <tr>
+                                    <th class="slab-column">Income Slab</th>
+                                    <th class="rate-column">Tax Rate</th>
+                                    <th class="amount-column">Your Tax</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Up to ₹2.5L</td>
+                                    <td class="rate">0%</td>
+                                    <td class="amount">₹0</td>
+                                </tr>
+                                <tr>
+                                    <td>₹2.5L to ₹5L</td>
+                                    <td class="rate">5%</td>
+                                    <td class="amount">{% if optimization_result %}₹{{ optimization_result.tax_slabs.slab1|default:"0" }}{% else %}₹0{% endif %}</td>
+                                </tr>
+                                <tr>
+                                    <td>₹5L to ₹10L</td>
+                                    <td class="rate">20%</td>
+                                    <td class="amount">{% if optimization_result %}₹{{ optimization_result.tax_slabs.slab2|default:"0" }}{% else %}₹0{% endif %}</td>
+                                </tr>
+                                <tr>
+                                    <td>Above ₹10L</td>
+                                    <td class="rate">30%</td>
+                                    <td class="amount">{% if optimization_result %}₹{{ optimization_result.tax_slabs.slab3|default:"0" }}{% else %}₹0{% endif %}</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2" class="total-label">Total Tax</td>
+                                    <td class="total-amount">{% if optimization_result %}₹{{ optimization_result.total_tax }}{% else %}₹0{% endif %}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Optimization Summary Card -->
+            <div class="tax-card summary-card">
+                <div class="card-header">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <h3>Optimization Summary</h3>
+                </div>
+                <div class="card-content">
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <div class="summary-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="summary-details">
+                                <h4>Total Tax Liability</h4>
+                                <p>₹{{ optimization_result.total_tax|default:"0" }}</p>
+                            </div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-icon">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="summary-details">
+                                <h4>Effective Tax Rate</h4>
+                                <p>{{ optimization_result.effective_rate|default:"0" }}%</p>
+                            </div>
+                        </div>
+                        <div class="summary-item highlight">
+                            <div class="summary-icon">
+                                <i class="fas fa-piggy-bank"></i>
+                            </div>
+                            <div class="summary-details">
+                                <h4>Potential Savings</h4>
+                                <p class="savings">₹{{ optimization_result.profit_gain|default:"0" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tax Benefits Card -->
+            <div class="tax-card benefits-card">
+                <div class="card-header">
+                    <i class="fas fa-gift"></i>
+                    <h3>Available Tax Benefits</h3>
+                </div>
+                <div class="card-content benefits-grid">
+                    <div class="benefit-item">
+                        <div class="benefit-icon"><i class="fas fa-home"></i></div>
+                        <h4>Section 80C</h4>
+                        <p>Maximum deduction of ₹1.5 lakhs through investments in PPF, ELSS, etc.</p>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon"><i class="fas fa-heartbeat"></i></div>
+                        <h4>Section 80D</h4>
+                        <p>Health insurance premium deduction up to ₹25,000</p>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon"><i class="fas fa-graduation-cap"></i></div>
+                        <h4>Section 80E</h4>
+                        <p>Interest on education loan is fully deductible</p>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                        <h4>NPS Benefits</h4>
+                        <p>Additional ₹50,000 deduction under section 80CCD(1B)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .tax-optimization-page {
+        max-width: 1200px;
+        margin: 0 auto 0 200px;
+        padding: 20px;
+        background: #0A0520;
+    }
+
+    .tax-header {
+        text-align: center;
+        padding: 30px 0;
+        margin-bottom: 40px;
+    }
+
+    .header-content h1 {
+        color: #ffffff;
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+
+    .header-subtitle {
+        color: #b39ddb;
+        font-size: 18px;
+    }
+
+    .tax-grid {
+        display: grid;
+        gap: 25px;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    .tax-card {
+        background: #1D0F39;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+    }
+
+    .tax-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .card-header {
+        background: linear-gradient(45deg, #2A1052, #4A2082);
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .card-header i {
+        font-size: 24px;
+        color: #b39ddb;
+    }
+
+    .card-header h3 {
+        margin: 0;
+        color: #ffffff;
+        font-size: 20px;
+    }
+
+    .card-content {
+        padding: 25px;
+    }
+
+    .tax-form label {
+        display: block;
+        color: #b39ddb;
+        margin-bottom: 8px;
+        font-size: 16px;
+    }
+
+    .tax-form input, .tax-form select {
+        width: 100%;
+        padding: 12px;
+        background: rgba(74, 32, 130, 0.1);
+        border: 1px solid rgba(179, 157, 219, 0.3);
+        border-radius: 8px;
+        color: #ffffff;
+        margin-bottom: 20px;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(45deg, #755BB4, #9578D3);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .submit-btn:hover {
+        background: linear-gradient(45deg, #9578D3, #B69EF2);
+        transform: translateY(-2px);
+    }
+
+    .metric-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid rgba(179, 157, 219, 0.1);
+    }
+
+    .metric-label {
+        color: #b39ddb;
+        font-size: 16px;
+    }
+
+    .metric-value {
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .metric-value.positive {
+        color: #4CAF50;
+    }
+
+    .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .benefit-item {
+        background: rgba(74, 32, 130, 0.1);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(179, 157, 219, 0.1);
+    }
+
+    .benefit-item:hover {
+        transform: translateY(-5px);
+        background: rgba(74, 32, 130, 0.2);
+    }
+
+    .benefit-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(45deg, #755BB4, #9578D3);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+    }
+
+    .benefit-icon i {
+        font-size: 24px;
+        color: white;
+    }
+
+    .benefit-item h4 {
+        color: #ffffff;
+        margin: 0 0 10px;
+        font-size: 18px;
+    }
+
+    .benefit-item p {
+        color: #b39ddb;
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .strategy-content {
+        background: rgba(74, 32, 130, 0.1);
+        border-radius: 12px;
+        padding: 20px;
+        color: #b39ddb;
+        line-height: 1.6;
+    }
+
+    /* Enhanced Tax Table Styles */
+    .tax-table-wrapper {
+        margin: 20px 0;
+        background: rgba(74, 32, 130, 0.1);
+        border-radius: 12px;
+        padding: 20px;
+        overflow-x: auto;
+    }
+
+    .tax-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        color: #ffffff;
+    }
+
+    .tax-table th, 
+    .tax-table td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid rgba(179, 157, 219, 0.1);
+    }
+
+    .tax-table th {
+        background: rgba(124, 92, 245, 0.2);
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .tax-table tbody tr:hover {
+        background: rgba(124, 92, 245, 0.1);
+        transition: background-color 0.3s ease;
+    }
+
+    .tax-table .slab-column {
+        width: 40%;
+    }
+
+    .tax-table .rate-column {
+        width: 25%;
+    }
+
+    .tax-table .amount-column {
+        width: 35%;
+    }
+
+    .tax-table .rate {
+        color: #b39ddb;
+        font-weight: 500;
+    }
+
+    .tax-table .amount {
+        color: #4CAF50;
+        font-weight: 600;
+    }
+
+    .tax-table tfoot tr {
+        background: rgba(124, 92, 245, 0.15);
+    }
+
+    .tax-table tfoot .total-label {
+        color: #ffffff;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .tax-table tfoot .total-amount {
+        color: #4CAF50;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    /* Summary Grid Styles */
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .summary-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        background: rgba(74, 32, 130, 0.1);
+        border-radius: 12px;
+        transition: transform 0.3s ease;
+    }
+
+    .summary-item:hover {
+        transform: translateY(-3px);
+    }
+
+    .summary-icon {
+        width: 45px;
+        height: 45px;
+        background: linear-gradient(45deg, #755BB4, #9578D3);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .summary-icon i {
+        font-size: 20px;
+        color: white;
+    }
+
+    .summary-details h4 {
+        color: #b39ddb;
+        font-size: 14px;
+        margin: 0 0 5px;
+    }
+
+    .summary-details p {
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .summary-item.highlight {
+        background: rgba(76, 175, 80, 0.1);
+    }
+
+    .summary-item.highlight .summary-icon {
+        background: linear-gradient(45deg, #4CAF50, #81C784);
+    }
+
+    .savings {
+        color: #4CAF50 !important;
+    }
+
+    @media (max-width: 768px) {
+        .tax-optimization-page {
+            margin: 0 auto;
+            padding: 10px;
+        }
+    }
+</style>
 {% endblock %}

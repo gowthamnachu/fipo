@@ -33,6 +33,13 @@
             flex-direction: column;
             align-items: center;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            scrollbar-width: none; /* For Firefox */
+            -ms-overflow-style: none; /* For Internet Explorer and Edge */
+        }
+
+        .sidebar::-webkit-scrollbar {
+            display: none; /* For Chrome, Safari and Opera */
         }
 
         .sidebar:hover {
@@ -45,6 +52,27 @@
             padding: 0;
             width: 100%;
             margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .sidebar .profile-section {
+            margin-top: auto;
+            width: 100%;
+            padding: 20px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar .logout-link {
+            margin-top: 10px;
+            color: #ff6b6b;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar .logout-link:hover {
+            opacity: 1;
         }
 
         .sidebar ul li {
@@ -86,11 +114,14 @@
 
         /* Main Content */
         .content {
-            margin-left: 240px;
+            margin-left: 130px;
             padding: 20px;
-            width: calc(100% - 240px);
+            width: calc(100% - 130px);
             background: #0E001F;
             position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
         }
 
         /* Logo Video */
@@ -140,7 +171,7 @@
             color: white;
         }        /* Profile Icon Styling */
         .profile-container {
-            position: absolute;
+            position: fixed;
             top: 15px;
             right: 20px;
             display: flex;
@@ -169,6 +200,9 @@
             padding: 10px;
             text-align: left;
             z-index: 1001;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         .profile-dropdown a {
@@ -187,6 +221,8 @@
 
         .profile-container:hover .profile-dropdown {
             display: block;
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .username {
@@ -227,9 +263,49 @@
         <ul>
             <li><a href="{% url 'dashboard' %}"><i class="fas fa-house"></i> Dashboard</a></li>
             <li><a href="{% url 'fund_allocation' %}"><i class="fas fa-coins"></i> Fund Allocation</a></li>
-            <li><a href="{% url 'visualize_funds' %}"><i class="fas fa-chart-bar"></i> Visualize Your Funds</a></li>
-            <li><a href="{% url 'portfolio_insights' %}"><i class="fas fa-lightbulb"></i> Advanced Portfolio Insights</a></li>
-            <li><a href="{% url 'generate_pdf_report' %}"><i class="fas fa-file-pdf"></i> Download Report</a></li>
+            <li><a href="{% url 'visualize_funds' %}" onclick="event.preventDefault(); document.getElementById('loading-screen').style.display = 'flex'; document.getElementById('loading-screen').style.opacity = '1'; setTimeout(() => { window.location.href = this.href; }, 50);"><i class="fas fa-chart-bar"></i> Visualize Your Funds</a></li>
+            <li><a href="{% url 'portfolio_insights' %}" onclick="event.preventDefault(); document.getElementById('loading-screen').style.display = 'flex'; document.getElementById('loading-screen').style.opacity = '1'; setTimeout(() => { window.location.href = this.href; }, 50);"><i class="fas fa-lightbulb"></i> Advanced Portfolio Insights</a></li>
+            <li><a href="{% url 'generate_pdf_report' %}" onclick="event.preventDefault(); 
+                const loadingScreen = document.getElementById('loading-screen');
+                loadingScreen.style.display = 'flex'; 
+                loadingScreen.style.opacity = '1';
+                fetch(this.href)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'FiPo_Analysis_Report.pdf';
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                        loadingScreen.style.display = 'none';
+                        const message = document.createElement('div');
+                        message.style.position = 'fixed';
+                        message.style.top = '20px';
+                        message.style.left = '50%';
+                        message.style.transform = 'translateX(-50%)';
+                        message.style.backgroundColor = '#4CAF50';
+                        message.style.color = 'white';
+                        message.style.padding = '15px 30px';
+                        message.style.borderRadius = '5px';
+                        message.style.zIndex = '9999';
+                        message.textContent = 'Report downloaded successfully!';
+                        document.body.appendChild(message);
+                        setTimeout(() => {
+                            message.style.opacity = '0';
+                            message.style.transition = 'opacity 0.5s ease';
+                            setTimeout(() => {
+                                document.body.removeChild(message);
+                                window.location.href = '{% url "dashboard" %}';
+                            }, 500);
+                        }, 2000);
+                    })
+                    .catch(error => {
+                        loadingScreen.style.display = 'none';
+                        console.error('Download failed:', error);
+                    });"><i class="fas fa-file-pdf"></i> Download Report</a></li>
             <li><a href="{% url 'risk_return_analysis' %}"><i class="fas fa-chart-line"></i> Risk & Return Analysis</a></li>
             <li><a href="{% url 'tax_optimization' %}"><i class="fas fa-calculator"></i> Tax Optimization</a></li>  
             <li><a href="{% url 'about_us' %}"><i class="fas fa-info-circle"></i> About FiPo</a></li>
@@ -243,8 +319,9 @@
                 <p class="username">{{ user.username }}</p>
                 <p class="user-email">{{ user.email }}</p>
                 <div class="separator"></div>
-                <a href="{% url 'profile' %}">View Profile</a>
-                <a href="{% url 'logout' %}">Logout</a>
+                <a href="{% url 'profile' %}"><i class="fas fa-user"></i> View Profile</a>
+                <div class="separator"></div>
+                <a href="{% url 'logout' %}" style="color: #ff6b6b;"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
         </div>
         
@@ -252,8 +329,6 @@
     <div class="content">
         <!-- User Authentication Links (Top-Right) -->
         <div class="auth-links">
-    
-                <a href="{% url 'logout' %}" class="auth-btn" title="Logout"><i class="fas fa-sign-out-alt"></i></a>
             {% else %}
                 <a href="{% url 'login' %}" class="auth-btn" title="Login"><i class="fas fa-sign-in-alt"></i></a>
                 <a href="{% url 'signup' %}" class="auth-btn" title="Sign Up"><i class="fas fa-user-plus"></i></a>
@@ -267,12 +342,129 @@
     <script>
         // Show loading screen when the page starts loading
         document.getElementById('loading-screen').style.display = 'flex';
+        document.getElementById('loading-screen').style.opacity = '1';
 
-        // Hide loading screen once the content is loaded
+        // Hide loading screen with fade effect
         window.addEventListener('load', function() {
-            document.getElementById('loading-screen').style.display = 'none';
+            const loadingScreen = document.getElementById('loading-screen');
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 300);
+        });
+
+        // Add loading screen to all navigation links
+        document.querySelectorAll('.sidebar ul li a').forEach(link => {
+            if (!link.hasAttribute('onclick')) {
+                link.addEventListener('click', function(e) {
+                    const loadingScreen = document.getElementById('loading-screen');
+                    loadingScreen.style.display = 'flex';
+                    loadingScreen.style.opacity = '1';
+                });
+            }
         });
     </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Financial terms dictionary (keep existing terms)
+        const financialTerms = {
+            // Portfolio Management
+            'portfolio optimization': 'The process of selecting the optimal allocation of assets to maximize returns while minimizing risk',
+            'asset allocation': 'Strategic distribution of investments across various asset classes',
+            'rebalancing': 'Periodic adjustment of portfolio allocations to maintain desired risk levels',
+            'diversification': 'Risk management strategy of spreading investments across different assets',
+            
+            // Risk Metrics
+            'sharpe ratio': 'Measure of risk-adjusted return relative to the risk-free rate',
+            'volatility': 'Statistical measure of price variation and market uncertainty',
+            'beta': 'Measure of an asset\'s volatility compared to the market',
+            'alpha': 'Excess return of an investment relative to its benchmark',
+            'value at risk': 'Statistical measure of potential portfolio losses',
+            'tracking error': 'Divergence between portfolio and benchmark performance',
+            'standard deviation': 'Statistical measure of historical volatility',
+            'correlation coefficient': 'Statistical measure of relationship between assets',
+            'risk-adjusted return': 'Investment return relative to undertaken risk',
+            'downside risk': 'Potential loss from price movements below expected levels',
+            
+            // Investment Theory
+            'modern portfolio theory': 'Framework for portfolio optimization based on risk-return tradeoff',
+            'efficient frontier': 'Set of optimal portfolios offering highest return for given risk',
+            'capital asset pricing model': 'Model describing relationship between risk and expected return',
+            'risk premium': 'Additional return expected above risk-free rate',
+            'market efficiency': 'Degree to which market prices reflect all available information',
+            
+            // Technical Analysis
+            'momentum': 'Continuance of existing price trends',
+            'moving average': 'Technical indicator showing average price over time period',
+            'relative strength index': 'Momentum indicator measuring speed and magnitude of price changes',
+            'support level': 'Price level where downward trend is expected to pause',
+            'resistance level': 'Price level where upward trend is expected to pause',
+            
+            // Fixed Income
+            'yield curve': 'Graphical relationship between interest rates and time to maturity',
+            'duration': 'Measure of bond\'s sensitivity to interest rate changes',
+            'credit spread': 'Difference in yield between bonds of different credit quality',
+            
+            // Market Metrics
+            'market capitalization': 'Total value of a company\'s outstanding shares',
+            'price-to-earnings ratio': 'Ratio for valuing companies based on share price relative to earnings',
+            'earnings per share': 'Company\'s profit allocated to each outstanding share',
+            'dividend yield': 'Ratio of dividends paid relative to share price'
+        };
+
+        // Simplified keyword linking
+        function wrapKeywords(text) {
+            const pattern = new RegExp(Object.keys(financialTerms).join('|'), 'gi');
+            return text.replace(pattern, match => {
+                const keyword = match.toLowerCase();
+                const anchor = keyword.replace(/\s+/g, '-');
+                return `<a href="/about-us#${anchor}" 
+                         class="keyword-link"
+                         >${match}</a>`;
+            });
+        }
+
+        // Process text content
+        function processContent() {
+            const contentElements = document.querySelectorAll('.content p, .content li, .content h3, .content h4');
+            contentElements.forEach(element => {
+                if (!element.querySelector('a')) { // Only process if no links inside
+                    element.innerHTML = wrapKeywords(element.innerHTML);
+                }
+            });
+        }
+
+        // Initial processing
+        processContent();
+
+        // Process after dynamic content loads
+        const observer = new MutationObserver(() => {
+            processContent();
+        });
+
+        observer.observe(document.querySelector('.content'), {
+            childList: true,
+            subtree: true
+        });
+    });
+    </script>
+
+    <style>
+        .keyword-link {
+            color: #7c5cf5;
+            text-decoration: none;
+            border-bottom: 1px dashed #7c5cf5;
+            padding: 0 2px;
+            transition: all 0.3s ease;
+        }
+
+        .keyword-link:hover {
+            color: #9578D3;
+            border-bottom-style: solid;
+            background: rgba(124, 92, 245, 0.1);
+        }
+    </style>
 
 </body>
 </html>

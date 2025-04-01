@@ -93,16 +93,19 @@ def optimize_allocation(investment_amount):
 
     num_assets = len(CATEGORIES)
 
-    # ✅ Objective function: Maximize Sharpe Ratio
+    # ✅ Objective function: Maximize Sharpe Ratio with risk penalty
     def neg_sharpe(weights):
         expected_return = np.dot(weights, returns)
-        portfolio_risk = np.sqrt(np.dot(weights.T, np.dot(correlation_matrix, weights)))  # Adjust for correlations
-        return -expected_return / (portfolio_risk + 1e-6)  # Avoid division by zero
+        portfolio_risk = np.sqrt(np.dot(weights.T, np.dot(correlation_matrix, weights)))
+        risk_penalty = 100 * abs(np.sum(weights) - 1)  # Penalty for weights not summing to 1
+        return -(expected_return - 0.5 * portfolio_risk) + risk_penalty
 
-    # Constraints: Sum of weights = 1
-    constraints = {'type': 'eq', 'fun': lambda w: np.sum(w) - 1}
+    # ✅ Constraints: Sum of weights = 1 (strict equality)
+    constraints = [
+        {'type': 'eq', 'fun': lambda w: np.sum(w) - 1}
+    ]
 
-    # ✅ Ensure bounds are properly structured
+    # ✅ Ensure bounds are properly structured with tighter constraints
     bounds = [
         (0.15, 0.40),  # Equity: 15%-40%
         (0.10, 0.30),  # Mutual Funds: 10%-30%
@@ -114,20 +117,48 @@ def optimize_allocation(investment_amount):
     # Initial Guess: Equal allocation
     initial_guess = np.array([1 / num_assets] * num_assets)
 
-    # Optimize
-    result = minimize(neg_sharpe, initial_guess, bounds=bounds, constraints=constraints)
+    # Optimize with increased iterations and tolerance
+    result = minimize(neg_sharpe, initial_guess, 
+                     bounds=bounds, 
+                     constraints=constraints,
+                     method='SLSQP',
+                     options={'maxiter': 1000, 'ftol': 1e-8})
 
-    # Convert weights to rupees
     if result.success:
-        optimized_weights = result.x
-        allocation = {
-            category: round(weight * investment_amount, 2)
-            for category, weight in zip(CATEGORIES.keys(), optimized_weights)
-        }
+        # Normalize weights to ensure they sum exactly to 1
+        optimized_weights = result.x / np.sum(result.x)
+        
+        # Calculate raw allocations
+        raw_allocations = {category: weight * investment_amount 
+                         for category, weight in zip(CATEGORIES.keys(), optimized_weights)}
+        
+        # Round allocations while preserving total
+        total = sum(raw_allocations.values())
+        rounded_allocations = {}
+        running_total = 0
+        
+        # Round all but the last category
+        categories = list(CATEGORIES.keys())
+        for category in categories[:-1]:
+            amount = round(raw_allocations[category], 2)
+            rounded_allocations[category] = amount
+            running_total += amount
+        
+        # Adjust last category to ensure exact total
+        rounded_allocations[categories[-1]] = round(investment_amount - running_total, 2)
+        
+        allocation = rounded_allocations
     else:
         print("❌ Optimization failed. Using equal allocation.")
-        allocation = {cat: investment_amount / num_assets for cat in CATEGORIES}  # Equal split if failed
+        amount_per_asset = round(investment_amount / num_assets, 2)
+        allocation = {cat: amount_per_asset for cat in list(CATEGORIES.keys())[:-1]}
+        # Adjust last category for rounding errors
+        allocation[list(CATEGORIES.keys())[-1]] = round(investment_amount - sum(allocation.values()), 2)
 
-    print(f"✅ Optimized Weights: {optimized_weights}")  # Debugging Output
+    # Verify total allocation matches investment amount
+    total_allocated = sum(allocation.values())
+    print(f"✅ Total Allocated: {total_allocated} (Target: {investment_amount})")
+    print(f"✅ Allocation Weights: {[round(v/investment_amount, 4) for v in allocation.values()]}")
+    
     return allocation
 
