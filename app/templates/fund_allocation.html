@@ -228,11 +228,48 @@
 
     /* Form Styling */
     .investment-form {
-        background: rgba(255, 255, 255, 0.06);
-        padding: 25px;
-        border-radius: 10px;
-        text-align: left;
-        margin-bottom: 25px;
+        background: #1D0F39;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        margin: 0 auto;
+        max-width: 600px;
+        text-align: center;
+    }
+
+    .form-group {
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto 20px;
+    }
+
+    .form-group p {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        color: #b39ddb;
+        margin-bottom: 8px;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid rgba(179, 157, 219, 0.3);
+        border-radius: 8px;
+        background: rgba(74, 32, 130, 0.1);
+        color: #ffffff;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #7c5cf5;
+        box-shadow: 0 0 0 2px rgba(124, 92, 245, 0.2);
     }
 
     input[type="text"],
@@ -474,7 +511,7 @@
     .btn-visualize {
         display: inline-block;
         margin-top: 20px;
-        background: #28a745;
+        background: linear-gradient(45deg, #755BB4, #9578D3); /* Updated to match theme */
         color: white;
         padding: 12px 25px;
         text-decoration: none;
@@ -492,7 +529,9 @@
     }
 
     .btn-visualize:hover {
-        background: #218838;
+        background: linear-gradient(45deg, #9578D3, #B69EF2); /* Updated hover state */
+        transform: translateY(-2px); /* Added transform effect */
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Added shadow effect */
     }
 
     /* Responsive Design */

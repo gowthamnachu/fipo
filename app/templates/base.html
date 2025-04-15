@@ -367,86 +367,131 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Financial terms dictionary (keep existing terms)
-        const financialTerms = {
-            // Portfolio Management
-            'portfolio optimization': 'The process of selecting the optimal allocation of assets to maximize returns while minimizing risk',
-            'asset allocation': 'Strategic distribution of investments across various asset classes',
-            'rebalancing': 'Periodic adjustment of portfolio allocations to maintain desired risk levels',
-            'diversification': 'Risk management strategy of spreading investments across different assets',
+        const loadingScreen = document.getElementById('loading-screen');
+        
+        // Function to safely show/hide loading screen with timeout safety
+        const handleLoading = {
+            timeoutId: null,
+            maxDuration: 8000, // 8 seconds max loading time
             
-            // Risk Metrics
-            'sharpe ratio': 'Measure of risk-adjusted return relative to the risk-free rate',
-            'volatility': 'Statistical measure of price variation and market uncertainty',
-            'beta': 'Measure of an asset\'s volatility compared to the market',
-            'alpha': 'Excess return of an investment relative to its benchmark',
-            'value at risk': 'Statistical measure of potential portfolio losses',
-            'tracking error': 'Divergence between portfolio and benchmark performance',
-            'standard deviation': 'Statistical measure of historical volatility',
-            'correlation coefficient': 'Statistical measure of relationship between assets',
-            'risk-adjusted return': 'Investment return relative to undertaken risk',
-            'downside risk': 'Potential loss from price movements below expected levels',
+            show: function() {
+                if (loadingScreen) {
+                    loadingScreen.style.display = 'flex';
+                    loadingScreen.style.opacity = '1';
+                    
+                    // Set safety timeout
+                    this.timeoutId = setTimeout(() => this.hide(), this.maxDuration);
+                }
+            },
             
-            // Investment Theory
-            'modern portfolio theory': 'Framework for portfolio optimization based on risk-return tradeoff',
-            'efficient frontier': 'Set of optimal portfolios offering highest return for given risk',
-            'capital asset pricing model': 'Model describing relationship between risk and expected return',
-            'risk premium': 'Additional return expected above risk-free rate',
-            'market efficiency': 'Degree to which market prices reflect all available information',
-            
-            // Technical Analysis
-            'momentum': 'Continuance of existing price trends',
-            'moving average': 'Technical indicator showing average price over time period',
-            'relative strength index': 'Momentum indicator measuring speed and magnitude of price changes',
-            'support level': 'Price level where downward trend is expected to pause',
-            'resistance level': 'Price level where upward trend is expected to pause',
-            
-            // Fixed Income
-            'yield curve': 'Graphical relationship between interest rates and time to maturity',
-            'duration': 'Measure of bond\'s sensitivity to interest rate changes',
-            'credit spread': 'Difference in yield between bonds of different credit quality',
-            
-            // Market Metrics
-            'market capitalization': 'Total value of a company\'s outstanding shares',
-            'price-to-earnings ratio': 'Ratio for valuing companies based on share price relative to earnings',
-            'earnings per share': 'Company\'s profit allocated to each outstanding share',
-            'dividend yield': 'Ratio of dividends paid relative to share price'
+            hide: function() {
+                if (loadingScreen) {
+                    loadingScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                    }, 300);
+                    
+                    // Clear timeout if hide is called manually
+                    if (this.timeoutId) {
+                        clearTimeout(this.timeoutId);
+                        this.timeoutId = null;
+                    }
+                }
+            }
         };
 
-        // Simplified keyword linking
-        function wrapKeywords(text) {
-            const pattern = new RegExp(Object.keys(financialTerms).join('|'), 'gi');
-            return text.replace(pattern, match => {
-                const keyword = match.toLowerCase();
-                const anchor = keyword.replace(/\s+/g, '-');
-                return `<a href="/about-us#${anchor}" 
-                         class="keyword-link"
-                         >${match}</a>`;
-            });
-        }
+        // Update navigation link handlers
+        document.querySelectorAll('.sidebar ul li a').forEach(link => {
+            // Only add handler to links without existing onclick
+            if (!link.hasAttribute('onclick')) {
+                link.addEventListener('click', function(e) {
+                    // Prevent double clicks
+                    if (this.dataset.loading === 'true') {
+                        e.preventDefault();
+                        return;
+                    }
+                    
+                    this.dataset.loading = 'true';
+                    handleLoading.show();
+                    
+                    // Reset loading state after navigation or timeout
+                    setTimeout(() => {
+                        this.dataset.loading = 'false';
+                    }, 1000);
+                });
+            }
+        });
 
-        // Process text content
-        function processContent() {
-            const contentElements = document.querySelectorAll('.content p, .content li, .content h3, .content h4');
-            contentElements.forEach(element => {
-                if (!element.querySelector('a')) { // Only process if no links inside
-                    element.innerHTML = wrapKeywords(element.innerHTML);
+        // Update form submit handlers
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                if (this.dataset.submitting === 'true') {
+                    e.preventDefault();
+                    return;
                 }
+                this.dataset.submitting = 'true';
+                handleLoading.show();
             });
+        });
+
+        // Update download report handler
+        const downloadReport = document.querySelector('a[href*="generate_pdf_report"]');
+        if (downloadReport) {
+            downloadReport.onclick = function(e) {
+                e.preventDefault();
+                if (this.dataset.downloading === 'true') return;
+                
+                this.dataset.downloading = 'true';
+                handleLoading.show();
+                
+                fetch(this.href)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'FiPo_Analysis_Report.pdf';
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                        handleLoading.hide();
+                        
+                        // Show success message
+                        const message = document.createElement('div');
+                        message.style.position = 'fixed';
+                        message.style.top = '20px';
+                        message.style.left = '50%';
+                        message.style.transform = 'translateX(-50%)';
+                        message.style.backgroundColor = '#4CAF50';
+                        message.style.color = 'white';
+                        message.style.padding = '15px 30px';
+                        message.style.borderRadius = '5px';
+                        message.style.zIndex = '9999';
+                        message.textContent = 'Report downloaded successfully!';
+                        document.body.appendChild(message);
+                        
+                        setTimeout(() => {
+                            message.style.opacity = '0';
+                            message.style.transition = 'opacity 0.5s ease';
+                            setTimeout(() => {
+                                document.body.removeChild(message);
+                            }, 500);
+                        }, 2000);
+                    })
+                    .catch(error => {
+                        console.error('Download failed:', error);
+                        handleLoading.hide();
+                    })
+                    .finally(() => {
+                        this.dataset.downloading = 'false';
+                    });
+            };
         }
 
-        // Initial processing
-        processContent();
-
-        // Process after dynamic content loads
-        const observer = new MutationObserver(() => {
-            processContent();
-        });
-
-        observer.observe(document.querySelector('.content'), {
-            childList: true,
-            subtree: true
-        });
+        // Handle page load/unload
+        window.addEventListener('beforeunload', () => handleLoading.hide());
+        window.addEventListener('load', () => handleLoading.hide());
     });
     </script>
 
